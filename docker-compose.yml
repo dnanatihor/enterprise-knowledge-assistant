@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: know
+      POSTGRES_PASSWORD: know
+      POSTGRES_DB: know
+    ports:
+      - "5433:5432"
+  api:
+    build: .
+    environment:
+      KNOW_APP_ENV: dev
+      KNOW_LLM_MODE: scripted
+      KNOW_AUTH_MODE: dev
+      KNOW_DATABASE_URL: postgresql://know:know@postgres:5432/know
+    ports:
+      - "8005:8005"
+    depends_on:
+      - postgres

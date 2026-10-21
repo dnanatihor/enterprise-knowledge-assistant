@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Enterprise Knowledge Assistant</title>
+    <style>
+      :root { --ink: #1c1915; --paper: #f7f4ef; --accent: #0f4c45; }
+      body { margin: 0; background: var(--paper); color: var(--ink); font-family: Palatino, serif; }
+      main { max-width: 46rem; margin: 0 auto; padding: 16px; }
+      input, textarea, button { font: inherit; width: 100%; box-sizing: border-box; }
+      button { margin-top: 12px; background: var(--accent); color: #fff; border: 0; padding: 12px; }
+      button:focus, input:focus, textarea:focus { outline: 3px solid #b45309; outline-offset: 2px; }
+      #out { white-space: pre-wrap; border: 1px solid #d9d1c5; padding: 12px; min-height: 8rem; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Enterprise Knowledge Assistant</h1>
+      <p>Requests require a bearer token. Retrieval applies document roles before the model sees any text.</p>
+      <label for="token">Bearer token</label>
+      <input id="token" />
+      <label for="question">Question</label>
+      <textarea id="question" rows="3"></textarea>
+      <button id="ask" type="button">Ask</button>
+      <h2>Answer</h2>
+      <div id="out" role="status" aria-live="polite"></div>
+    </main>
+    <script>
+      document.getElementById("ask").addEventListener("click", async () => {
+        const response = await fetch("/api/v1/query", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            authorization: "Bearer " + document.getElementById("token").value,
+          },
+          body: JSON.stringify({ question: document.getElementById("question").value }),
+        });
+        document.getElementById("out").textContent = JSON.stringify(await response.json(), null, 2);
+      });
+    </script>
+  </body>
+</html>
